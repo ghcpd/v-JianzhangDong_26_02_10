@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=70.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dependency-upgrade-challenge"
+version = "0.1.0"
+description = "A realistic Python project for testing dependency upgrade skills"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+
+authors = [
+    { name = "Challenge Author", email = "challenge@example.com" }
+]
+
+keywords = [
+    "dependency",
+    "upgrade",
+    "testing",
+    "python",
+    "challenge"
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers"
+]
+
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest"
+]
+
+[project.scripts]
+app-cli = "app.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "app" }
+
+[tool.setuptools.packages.find]
+where = ["app"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra -q"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+select = [
+    "E",
+    "F",
+    "W",
+    "I"
+]
+
+[tool.mypy]
+python_version = "3.14"
+strict = false
+warn_unused_configs = true
