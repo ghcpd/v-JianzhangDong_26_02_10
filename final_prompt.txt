@@ -1,0 +1,21 @@
+# Dependency Upgrade Challenge
+
+## Problem
+
+The project won't run - Python version is set to 3.14 (doesn't exist), pytest versions don't match, and all dependencies are 2-4 years old.
+
+## What to Do
+
+Upgrade everything to latest versions and make the tests pass:
+
+- Fix Python version in `pyproject.toml` 
+- Update all dependencies in `requirements.txt`
+- Handle any breaking changes (especially Pydantic v1→v2)
+- Create missing `.env` file if needed
+
+## Success Criteria
+
+Run `pytest` and save results to `logs/` folder. All tests must pass.
+
+**Rules:** Don't modify test files. Fix the code, not the tests.
+All modifications should be made only in the issue_project_fixed folder, keeping the original issue_project folder unchanged
