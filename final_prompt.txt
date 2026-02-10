@@ -1,0 +1,145 @@
+# Role & Objective
+
+You are a senior Python software engineer responsible for upgrading an outdated Python project to use modern, compatible dependencies and ensuring all tests pass successfully.
+
+# Inputs & Context
+
+The workspace contains:
+- `issue_project/` — Original project folder (MUST remain unchanged)
+- `issue_project_fixed/` — Target folder for all modifications (if not exists, copy from issue_project first)
+- The project has:
+  - `pyproject.toml` with invalid Python version (3.14, which doesn't exist)
+  - `requirements.txt` with outdated dependencies (2-4 years old)
+  - Mismatched pytest versions
+  - Code using Pydantic v1 APIs (potential breaking changes in v2)
+  - Missing `.env` file
+  - Test suite in `tests/` directory
+  - Application code in `app/` directory
+- `logs/` — Directory for test output (create if not exists)
+
+# Step-by-Step Instructions
+
+## Phase 1: Environment Setup
+1. If `issue_project_fixed/` doesn't exist, copy entire `issue_project/` directory to `issue_project_fixed/`
+2. Create `logs/` directory if it doesn't exist
+3. Read and analyze the following files in `issue_project_fixed/`:
+   - `pyproject.toml`
+   - `requirements.txt`
+   - All Python source files in `app/` directory
+   - All test files in `tests/` directory
+
+## Phase 2: Dependency Analysis
+4. Identify all Python dependencies and their current versions
+5. Locate all Pydantic usage (imports, BaseModel subclasses, validators, parse_obj, Config inner classes)
+6. Note which tests depend on which application modules
+7. Identify missing configuration files (like `.env`)
+
+## Phase 3: Upgrade Execution (work ONLY in issue_project_fixed/)
+8. Update `pyproject.toml`:
+   - Set Python version to a valid, modern version (e.g., 3.11, 3.12, or 3.13)
+   - Verify python version is actually available and compatible
+
+9. Update `requirements.txt`:
+   - Upgrade all dependencies to their latest stable versions
+   - Ensure pytest and all testing dependencies are version-compatible
+   - Ensure httpx, requests, or other HTTP libraries are up-to-date
+   - Handle Pydantic upgrade (v1 → v2) or choose alternative if incompatible
+
+10. Handle Pydantic v1→v2 Migration (if applicable):
+    - Replace `parse_obj()` with `model_validate()` 
+    - Replace `parse_raw()` with `model_validate_json()`
+    - Replace `dict()` method with `model_dump()`
+    - Update `Config` inner classes to use `model_config = ConfigDict(...)` if needed
+    - Update field validators to use v2 syntax if present
+    - **Alternative:** If Pydantic v2 is incompatible, replace with Python dataclasses or stick to Pydantic v1.x latest
+
+11. Create `.env` file if needed:
+    - Read tests and code to identify required environment variables
+    - Populate with sensible default values (e.g., API base URLs, timeouts, etc.)
+    - Ensure format is `KEY=value` with one variable per line
+
+## Phase 4: Validation & Testing
+12. Install updated dependencies: `pip install -r issue_project_fixed/requirements.txt`
+13. Run the complete test suite from the `issue_project_fixed/` directory
+14. Execute: `pytest -q` and capture complete output
+15. Write the full pytest output (including test count, pass/fail status, and summary) to `logs/results.txt`
+16. Verify all tests pass (no failures, no errors)
+
+## Phase 5: Iterative Fixing (if tests fail)
+17. If any tests fail:
+    - Read the failure messages and tracebacks
+    - Identify the root cause (import errors, API changes, missing config, etc.)
+    - Fix ONLY the application code in `app/` directory or configuration files
+    - **NEVER modify test files in `tests/` directory**
+    - Repeat from step 12 until all tests pass
+
+18. Ensure `logs/results.txt` contains the final successful test run output with clear indication that all tests passed
+
+# Output Specification
+
+## Modified Files (all in issue_project_fixed/ only)
+- `pyproject.toml` — Updated with valid Python version
+- `requirements.txt` — All dependencies upgraded to latest compatible versions
+- `app/*.py` — Code updated to handle breaking API changes (especially Pydantic v2)
+- `.env` — Created with necessary environment variables
+- Any other configuration files as needed
+
+## Test Results File
+- `logs/results.txt` — Complete pytest output showing:
+  - Test discovery summary
+  - Individual test results (. for pass)
+  - Final summary line (e.g., "4 passed in 0.05s")
+  - Must show 100% tests passing
+
+## Verification Output
+After completion, confirm:
+- ✅ All tests pass (X passed, 0 failed)
+- ✅ Python version is valid and supported
+- ✅ All dependencies are modern and compatible
+- ✅ No test files were modified
+- ✅ Original `issue_project/` folder remains unchanged
+- ✅ Complete test output written to `logs/results.txt`
+
+# Constraints & Preferences
+
+## Hard Constraints
+- **NEVER modify any files in `tests/` directory** — Fix the code, not the tests
+- **NEVER modify original `issue_project/` folder** — All changes in `issue_project_fixed/` only
+- **Python version must be valid** (3.11, 3.12, 3.13, or other existing versions; NOT 3.14)
+- **All tests must pass** — No failures, errors, or skips allowed
+- **pytest output must be written to `logs/results.txt`** — Not just summary, complete output
+
+## Technical Preferences
+- Use latest stable versions of all dependencies where possible
+- Prefer official migration paths for breaking changes (e.g., Pydantic v2 migration)
+- If a dependency has known compatibility issues, choose the latest compatible version or find alternatives
+- Ensure `.env` file contains all required variables for tests to pass
+- Use explicit version pins in `requirements.txt` (e.g., `package==X.Y.Z`) for reproducibility
+
+## Code Quality
+- Maintain existing code structure and logic
+- Keep changes minimal — only what's necessary for compatibility
+- Preserve all existing functionality and behavior
+- Ensure imports remain clean and organized
+
+# Quality Gates
+
+Before marking complete, verify:
+1. ✅ `pytest` command in `issue_project_fixed/` returns exit code 0
+2. ✅ `logs/results.txt` exists and contains full test output with "X passed" summary
+3. ✅ Output shows ALL tests passed (100% pass rate)
+4. ✅ No import errors, no module not found errors
+5. ✅ `.env` file exists if required by the application
+6. ✅ `pyproject.toml` has valid Python version (not 3.14)
+7. ✅ `requirements.txt` has modern dependency versions (from 2024-2026)
+8. ✅ Original `issue_project/` folder is completely unmodified
+9. ✅ No test files in `issue_project_fixed/tests/` were modified
+
+# Critical Rules (Highest Priority)
+
+1. **Single-turn completion**: Execute all phases without waiting for feedback or confirmation
+2. **Test files are immutable**: Under no circumstances modify any file in `tests/` directory
+3. **Fix application code only**: Address compatibility issues in `app/` directory and config files
+4. **Complete test output required**: The `logs/results.txt` file must contain the full pytest output, not just a summary
+5. **100% test pass rate mandatory**: Continue fixing until all tests pass successfully
+6. **Preserve original project**: Keep `issue_project/` folder completely unchanged as a reference
